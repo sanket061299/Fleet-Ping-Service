@@ -7,13 +7,11 @@ ENV NODE_ENV=production \
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --omit=dev --no-audit --no-fund \
-    && npm cache clean --force
+RUN npm install --omit=dev --no-audit --no-fund && npm cache clean --force
 
 COPY server.js ./
 
-RUN groupadd --system --gid 10001 app \
-    && useradd --system --uid 10001 --gid app --shell /usr/sbin/nologin app
+RUN groupadd --system --gid 10001 app && useradd --system --uid 10001 --gid app --shell /usr/sbin/nologin app
 
 USER 10001:10001
 
