@@ -43,6 +43,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check repository files
+        run: |
+          echo "Current directory:"
+           pwd
+
+          echo "Repository files:"
+          ls -la
+
+          echo "package files:"
+          find . -maxdepth 2 -name "package.json" -o -name "package-lock.json"
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
