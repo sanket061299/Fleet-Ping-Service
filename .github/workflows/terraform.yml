@@ -1,0 +1,42 @@
+name: Terraform
+
+on:
+  pull_request:
+    paths: ["infra/**"]
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        type: choice
+        options: [dev, prod]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'dev' }}
+    defaults:
+      run:
+        working-directory: infra/environments/${{ inputs.environment || 'dev' }}
+    env:
+      TF_VAR_db_admin_password: ${{ secrets.DB_ADMIN_PASSWORD }}
+      TF_VAR_db_app_password: ${{ secrets.DB_APP_PASSWORD }}
+      TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
+      TF_VAR_image: "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - uses: hashicorp/setup-terraform@v3
+      - name: Terraform init
+        run: |
+          terraform init             -backend-config="resource_group_name=${{ vars.TFSTATE_RESOURCE_GROUP }}"             -backend-config="storage_account_name=${{ vars.TFSTATE_STORAGE_ACCOUNT }}"             -backend-config="container_name=tfstate"             -backend-config="key=vexarfleet-${{ inputs.environment || github.ref_name }}.tfstate"             -backend-config="use_azuread_auth=true"
+      - run: terraform fmt -check -recursive ../..
+      - run: terraform validate
+      - run: terraform plan

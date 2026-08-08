@@ -1,0 +1,20 @@
+{
+  "name": "vexar-fleet-ping-service",
+  "version": "1.0.0",
+  "description": "Production-ready Fleet Ping Service",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "test:coverage": "node --test",
+    "lint": "node --check server.js"
+  },
+  "engines": {
+    "node": ">=22 <23"
+  },
+  "dependencies": {
+    "express": "4.19.2",
+    "jsonwebtoken": "9.0.2",
+    "pg": "8.11.5"
+  }
+}

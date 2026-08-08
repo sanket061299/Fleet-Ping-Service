@@ -1,0 +1,24 @@
+CREATE TABLE IF NOT EXISTS drivers (
+  id BIGSERIAL PRIMARY KEY,
+  phone VARCHAR(15) UNIQUE NOT NULL,
+  name VARCHAR(100),
+  otp_hash TEXT NOT NULL,
+  role VARCHAR(20) NOT NULL DEFAULT 'driver',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS fleet_pings (
+  id BIGSERIAL PRIMARY KEY,
+  vehicle_id VARCHAR(50) NOT NULL,
+  lat DECIMAL(9,6) NOT NULL CHECK (lat BETWEEN -90 AND 90),
+  lng DECIMAL(9,6) NOT NULL CHECK (lng BETWEEN -180 AND 180),
+  speed DECIMAL(5,2) NOT NULL CHECK (speed BETWEEN 0 AND 500),
+  ts TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_fleet_pings_vehicle_ts
+  ON fleet_pings (vehicle_id, ts DESC);
+
+CREATE INDEX IF NOT EXISTS idx_fleet_pings_ts
+  ON fleet_pings (ts DESC);

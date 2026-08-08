@@ -1,0 +1,14 @@
+.git
+.github
+.gitignore
+README.md
+docs
+infra
+tests
+docker-compose.yml
+*.md
+.env
+.env.*
+terraform.tfstate
+terraform.tfstate.*
+.terraform
